@@ -7,10 +7,13 @@ name|optional|description
 ---|---|------
 data|❎|grid with original data
 distance|❎|how many cells to walk away from center block
+||0|immediate neighbors (max of 6)
+||1|neighbors within a distance of 1 cells (max of 26)
+||2|neighbors within a distance of 2 cells (max of 124)
 fields|☑️|path to save modified grid|
 display||show results in a 3d voxel chart
 ## 📓 Notes
- - When distance is `== 1` the builtin function cell_neighbors() is used. otherwise a slower custom algorithm is used.
+ - When distance is `== 0` the builtin function cell_neighbors() is used. otherwise a slower custom algorithm is used.
 ## 📚 Examples
 ![screenshot2](https://github.com/pemn/assets/blob/main/vtk_cell_neighbors2.png?raw=true)  
 ## 🧩 Compatibility
