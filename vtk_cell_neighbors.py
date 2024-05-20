@@ -42,7 +42,12 @@ def vtk_cell_neighbors(data, distance, fields, output, display):
   if grid is None:
     print("data is not a schema or a grid")
     return 1
-  gcn = [grid.cell_neighbors(_, 'faces') for _ in range(grid.n_cells)]
+  if not distance:
+    distance = 1
+  else:
+    distance = int(distance)
+
+  gcn = grid.find_neighbors(distance)
   vl = []
   for field, operation in fields:
     if not field:

@@ -1058,20 +1058,24 @@ class vtk_Voxel(object):
 
     return bm
 
-  #def find_neighbors_numpy(self, distance = 1):
-    #' for each cell, return a list of its neighbors '
-    # r = []
-    # # Define the neighborhood offsets for N dimensions
-    # n = np.reshape(np.transpose(np.subtract(np.indices(np.full(3, 3)), distance)), (-1, 3))
+  def find_neighbors(self, distance = 1):
+    ' for each cell, return a list of its neighbors '
+    r = []
+    if distance == 1:
+      # in this special case we can use the much faster built in solution
+      r = [self.cell_neighbors(_, 'faces') for _ in range(self.n_cells)]
+    else:
+      # Define the neighborhood offsets for N dimensions
+      n = np.reshape(np.transpose(np.subtract(np.indices(np.full(3, 3)), distance)), (-1, 3))
 
-    # # Remove the center cell
-    # n = np.delete(n, n.shape[0] // 2, axis=0)
+      # Remove the center cell
+      n = np.delete(n, n.shape[0] // 2, axis=0)
 
-    # for cid in np.ndindex(tuple(self.shape)):
-    #   nid = np.add(n, cid)
-    #   bbi = np.logical_not(np.any(np.logical_or(np.greater_equal(nid, self.shape), np.less(nid, 0)), 1))
-    #   r.append([np.ravel_multi_index(_, self.shape) for _ in nid[bbi]])
-    # return r
+      for cid in np.ndindex(tuple(self.shape)):
+        nid = np.add(n, cid)
+        bbi = np.logical_not(np.any(np.logical_or(np.greater_equal(nid, self.shape), np.less(nid, 0)), 1))
+        r.append([np.ravel_multi_index(_, self.shape) for _ in nid[bbi]])
+    return r
 
   @classmethod
   def factory(cls, data = None):
