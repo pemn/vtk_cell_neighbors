@@ -1,5 +1,5 @@
 ## 📌 Description
-for each cell on a grid, evaluate a expresion on all neighbors
+for each cell on a grid, evaluate a expression on all neighbors
 ## 📸 Screenshot
 ![screenshot1](https://github.com/pemn/assets/blob/main/vtk_cell_neighbors1.png?raw=true)
 ## 📝 Parameters
@@ -10,7 +10,6 @@ distance|❎|how many cells to walk away from center block
 fields|☑️|path to save modified grid|
 display||show results in a 3d voxel chart
 ## 📓 Notes
-  
 ## 📚 Examples
 ![screenshot2](https://github.com/pemn/assets/blob/main/vtk_cell_neighbors2.png?raw=true)  
 ## 🧩 Compatibility
