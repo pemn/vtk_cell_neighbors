@@ -1058,22 +1058,24 @@ class vtk_Voxel(object):
 
     return bm
 
-  def find_neighbors(self, distance = 1):
+  def find_neighbors(self, distance = None):
     ' for each cell, return a list of its neighbors '
     r = []
-    if distance == 1:
-      # in this special case we can use the much faster built in solution
+    if not distance:
+      # when distance is 0 or blank use the much faster VTK built in solution
       r = [self.cell_neighbors(_, 'faces') for _ in range(self.n_cells)]
     else:
+      distance = 1
       # Define the neighborhood offsets for N dimensions
       n = np.reshape(np.transpose(np.subtract(np.indices(np.full(3, 3)), distance)), (-1, 3))
 
       # Remove the center cell
       n = np.delete(n, n.shape[0] // 2, axis=0)
-
       for cid in np.ndindex(tuple(self.shape)):
         nid = np.add(n, cid)
         bbi = np.logical_not(np.any(np.logical_or(np.greater_equal(nid, self.shape), np.less(nid, 0)), 1))
+        #print(*cid)
+        #print(nid[bbi])
         r.append([np.ravel_multi_index(_, self.shape) for _ in nid[bbi]])
     return r
 
@@ -1493,26 +1495,13 @@ def vtk_tif_to_grid(fp, cell_size = (1,1,1)):
     grid.cell_data['0'] = img.flat
     return grid
 
-#def vtk_reblock(grid, cell_size):
-#  if np.ndim(cell_size) < 1:
-#    cell_size = np.full(3, float(cell_size))
-#  print(vtk_mesh_info(grid))
-#  s0 = vtk_array_ijk(grid, None, False)
-#  d = np.divide(np.multiply(grid.spacing, np.add(grid.dimensions,1)), cell_size).astype(np.int_)
-#  mesh = pv.ImageData(spacing=cell_size, dimensions=d)
-#  print(mesh)
-#  s1 = vtk_array_ijk(mesh, None, False)
-#  print(s0.shape)
-#  print(s1.shape)
-  #if np.sum(np.mod(ncell_size, grid.spacing)) > 0.01:
-  #  raise Exception('new cell size',cell_size,'must be a multiple of current cell size',grid.spacing)
+if __name__=="__main__":
+  if len(sys.argv) > 1:
+    grid = vtk_Voxel.cls_init((6,5,4), (10,10,10), (0,0,0))
+    gcn = grid.find_neighbors(int(sys.argv[1]))
+    print(gcn)
+    grid['t'] = np.linspace(1, 0, grid.n_cells, True)
+    grid['t_count'] = np.fromiter(map(len, gcn), np.int_)
 
+    vtk_plot_grid_vars(grid, ['t', 't_count'])
 
-#if __name__=="__main__":
-#  if len(sys.argv) > 1:
-    #grid = vtk_Voxel.factory('std_voxel_0.vtk')
-    # grid = vtk_Voxel.cls_init((100,100,100),(10,10,10), (1000,1000,1000))
-    # grid.cells_volume('volume')
-    # vtk_grid_flag_ijk(grid, 'ijk')
-    # print(vtk_mesh_info(grid))
-    # grid.to_bmf(sys.argv[1])
