@@ -586,6 +586,28 @@ def vtk_cell_size(self):
   p0 = np.subtract(b0[:, 1], b0[:, 0])
   return np.divide(p0, np.maximum(np.subtract(self.dimensions, 1), 1))
 
+def vtk_plot_grid_vars(grid, variables):
+  import matplotlib.pyplot as plt
+  cmap = plt.get_cmap()
+  if not isinstance(variables, (list, tuple)):
+    variables = [variables]
+
+  nrows = int(np.sqrt(len(variables)))
+  ncols = int(np.ceil(len(variables) / nrows))
+  fig, ax = plt.subplots(nrows, ncols, tight_layout=True, squeeze=False, subplot_kw=dict(projection='3d'))
+  ax
+  for i in range(len(variables)):
+    s = vtk_array_ijk(grid, variables[i])
+    if s.dtype.num >= 17:
+      u, s = np.unique(s, return_inverse=True)
+      s = vtk_reshape_ijk(grid.dimensions, s, True)
+    if np.var(s):
+      s = np.maximum(np.divide(np.subtract(s, np.min(s)), np.subtract(np.max(s), np.min(s))), 0.001)
+    ax.flat[i].set_title(variables[i])
+    ax.flat[i].voxels(s, facecolors=cmap(s))
+
+  plt.show()
+
 def vtk_plot_grids(grids, variable = None):
   if not isinstance(grids, (list, tuple)):
     grids = [grids]
@@ -1036,20 +1058,20 @@ class vtk_Voxel(object):
 
     return bm
 
-  def find_neighbors(self, distance = 1):
-    ' for each cell, return a list of its neighbors '
-    r = []
-    # Define the neighborhood offsets for N dimensions
-    n = np.reshape(np.transpose(np.subtract(np.indices(np.full(3, 3)), distance)), (-1, 3))
+  #def find_neighbors_numpy(self, distance = 1):
+    #' for each cell, return a list of its neighbors '
+    # r = []
+    # # Define the neighborhood offsets for N dimensions
+    # n = np.reshape(np.transpose(np.subtract(np.indices(np.full(3, 3)), distance)), (-1, 3))
 
-    # Remove the center cell
-    n = np.delete(n, n.shape[0] // 2, axis=0)
+    # # Remove the center cell
+    # n = np.delete(n, n.shape[0] // 2, axis=0)
 
-    for cid in np.ndindex(tuple(self.shape)):
-      nid = np.add(n, cid)
-      bbi = np.logical_not(np.any(np.logical_or(np.greater_equal(nid, self.shape), np.less(nid, 0)), 1))
-      r.append([np.ravel_multi_index(_, self.shape) for _ in nid[bbi]])
-    return r
+    # for cid in np.ndindex(tuple(self.shape)):
+    #   nid = np.add(n, cid)
+    #   bbi = np.logical_not(np.any(np.logical_or(np.greater_equal(nid, self.shape), np.less(nid, 0)), 1))
+    #   r.append([np.ravel_multi_index(_, self.shape) for _ in nid[bbi]])
+    # return r
 
   @classmethod
   def factory(cls, data = None):
