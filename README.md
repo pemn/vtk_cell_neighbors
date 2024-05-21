@@ -1,11 +1,11 @@
 ## 📌 Description
-for each cell on a grid, evaluate a expression on all neighbors
+for each cell on a 3d grid/block model, evaluate a expression on all neighbors
 ## 📸 Screenshot
 ![screenshot1](https://github.com/pemn/assets/blob/main/vtk_cell_neighbors1.png?raw=true)
 ## 📝 Parameters
 name|optional|description
 ---|---|------
-data|❎|grid with original data
+data|❎|grid with original data in VTK file format
 distance|❎|how many cells to walk away from center block
 ||0|immediate neighbors (max of 6)
 ||1|neighbors within a distance of 1 cells (max of 26)
