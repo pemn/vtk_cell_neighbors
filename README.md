@@ -6,7 +6,7 @@ for each cell on a 3d grid/block model, evaluate a expression on all neighbors
 name|optional|description
 ---|---|------
 data|❎|grid with original data in VTK file format
-distance|❎|how many cells to walk away from center block
+distance|❎|how many cells away from center block should be used
 ||0|immediate neighbors (max of 6)
 ||1|neighbors within a distance of 1 cells (max of 26)
 ||2|neighbors within a distance of 2 cells (max of 124)
@@ -14,8 +14,9 @@ distance|❎|how many cells to walk away from center block
 fields|☑️|path to save modified grid|
 display||show results in a 3d voxel chart
 ## 📓 Notes
- - When distance is `== 0` the builtin function cell_neighbors() is used. otherwise a slower custom algorithm is used.
- - on distance `>= 1` the diagonal blocks will be included
+ - When distance is `== 0` the VTK builtin function cell_neighbors() is used. otherwise will fall back to a slower custom algorithm.
+ - diagonal blocks will only be included on distance `>= 1`.
+ - the search region is a square, not a sphere.
 ## 📚 Examples
 ![screenshot2](https://github.com/pemn/assets/blob/main/vtk_cell_neighbors2.png?raw=true)  
 ## 🧊 Test Data
