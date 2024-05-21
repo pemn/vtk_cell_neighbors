@@ -61,7 +61,8 @@ def vtk_cell_neighbors(data, distance, fields, output, display):
       operation = 'count'
 
     output_field = field + '_' + operation
-    vl.append(field)
+    if field not in vl:
+      vl.append(field)
     vl.append(output_field)
     log(field, operation, output_field)
     grid.cell_data[output_field] = np_calc_neighbors(grid.get_array(field, 'cell'), gcn, operation)

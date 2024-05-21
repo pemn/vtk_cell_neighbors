@@ -1065,18 +1065,17 @@ class vtk_Voxel(object):
       # when distance is 0 or blank use the much faster VTK built in solution
       r = [self.cell_neighbors(_, 'faces') for _ in range(self.n_cells)]
     else:
-      distance = 1
       # Define the neighborhood offsets for N dimensions
-      n = np.reshape(np.transpose(np.subtract(np.indices(np.full(3, 3)), distance)), (-1, 3))
-
+      nm = np.reshape(np.transpose(np.subtract(np.indices(np.full(3, 3)), distance)), (-1, 3))
       # Remove the center cell
-      n = np.delete(n, n.shape[0] // 2, axis=0)
-      for cid in np.ndindex(tuple(self.shape)):
-        nid = np.add(n, cid)
-        bbi = np.logical_not(np.any(np.logical_or(np.greater_equal(nid, self.shape), np.less(nid, 0)), 1))
-        #print(*cid)
-        #print(nid[bbi])
-        r.append([np.ravel_multi_index(_, self.shape) for _ in nid[bbi]])
+      nm = np.delete(nm, nm.shape[0] // 2, axis=0)
+      d = np.flipud(self.shape)
+      for cf in range(self.n_cells):
+        nd = np.add(nm, np.unravel_index(cf, d))
+        bi = np.logical_not(np.any(np.logical_or(np.greater_equal(nd, d), np.less(nd, 0)), 1))
+        rd = [np.ravel_multi_index(_, d) for _ in nd[bi]]
+        #print(cf, cd, '|', *zip(rd, nd[bi].tolist(), np.take(ijk, rd)))
+        r.append(rd)
     return r
 
   @classmethod
@@ -1496,12 +1495,10 @@ def vtk_tif_to_grid(fp, cell_size = (1,1,1)):
     return grid
 
 if __name__=="__main__":
-  if len(sys.argv) > 1:
-    grid = vtk_Voxel.cls_init((6,5,4), (10,10,10), (0,0,0))
-    gcn = grid.find_neighbors(int(sys.argv[1]))
-    print(gcn)
-    grid['t'] = np.linspace(1, 0, grid.n_cells, True)
-    grid['t_count'] = np.fromiter(map(len, gcn), np.int_)
-
-    vtk_plot_grid_vars(grid, ['t', 't_count'])
-
+  ...
+  # if len(sys.argv) > 1:
+  #   grid = vtk_Voxel.cls_init((6,5,4), (10,10,10), (0,0,0))
+  #   vtk_grid_flag_ijk(grid)
+  #   gcn = grid.find_neighbors(int(sys.argv[1]))
+  #   grid['count'] = np.fromiter(map(len, gcn), np.int_)
+  #   vtk_plot_grid_vars(grid, ['ijk', 'count'])
