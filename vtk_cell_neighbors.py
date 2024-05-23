@@ -18,14 +18,14 @@ from _gui import usage_gui, commalist, log
 from pd_vtk import vtk_Voxel, pv_save, vtk_array_ijk, vtk_mesh_info, vtk_reshape_a3d, vtk_plot_grid_vars
 
 def major(_):
-  return pd.Series.value_counts(_).idxmax()
+  return 
 
 def np_calc_neighbors(s, gcn, operation):
   r = None
-  f = None
   if operation == 'major':
-    f = major
     r = np.full(s.size, '', np.object_)
+    for i in range(s.size):
+      r[i] = pd.Series.value_counts(np.take(s, gcn[i])).idxmax()
   elif operation == 'count':
     r = np.fromiter(map(len, gcn), np.int_)
   else:
