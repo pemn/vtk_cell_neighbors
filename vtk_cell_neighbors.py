@@ -15,10 +15,7 @@ import pandas as pd
 sys.path.insert(0, os.path.splitext(sys.argv[0])[0] + '.pyz')
 from _gui import usage_gui, commalist, log
 
-from pd_vtk import vtk_Voxel, pv_save, vtk_array_ijk, vtk_mesh_info, vtk_reshape_a3d, vtk_plot_grid_vars
-
-def major(_):
-  return 
+from pd_vtk import vtk_Voxel, pv_save, vtk_mesh_info, vtk_plot_grid_vars
 
 def np_calc_neighbors(s, gcn, operation):
   r = None
