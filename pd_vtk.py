@@ -1070,12 +1070,12 @@ class vtk_Voxel(object):
       # Remove the center cell
       nm = np.delete(nm, nm.shape[0] // 2, axis=0)
       d = np.flipud(self.shape)
-      for cf in range(self.n_cells):
-        nd = np.add(nm, np.unravel_index(cf, d))
+      si = np.arange(self.n_cells).reshape(d)
+      for rn, ri in np.ndenumerate(si):
+        nd = np.add(nm, rn)
         bi = np.logical_not(np.any(np.logical_or(np.greater_equal(nd, d), np.less(nd, 0)), 1))
-        rd = [np.ravel_multi_index(_, d) for _ in nd[bi]]
-        #print(cf, cd, '|', *zip(rd, nd[bi].tolist(), np.take(ijk, rd)))
-        r.append(rd)
+        r.append(np.ravel_multi_index(nd[bi], d))
+
     return r
 
   @classmethod
