@@ -27,7 +27,9 @@ def np_calc_neighbors(s, gcn, operation):
     r = np.fromiter(map(len, gcn), np.int_)
   else:
     r = np.zeros(s.size)
-    f = eval(f'np.nan{operation}')
+    f = np.size
+    if hasattr(np, f'nan{operation}'):
+      f = getattr(np, f'nan{operation}')
 
     for i in range(s.size):
       r[i] = f(np.take(s, gcn[i]))
