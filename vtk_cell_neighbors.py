@@ -26,14 +26,14 @@ def np_calc_neighbors(s, gcn, operation):
   elif operation == 'count':
     r = np.fromiter(map(len, gcn), np.int_)
   else:
-    r = np.zeros(s.size)
+    r = np.full_like(s, np.nan)
     f = np.size
     if hasattr(np, f'nan{operation}'):
       f = getattr(np, f'nan{operation}')
 
     for i in range(s.size):
-      r[i] = f(np.take(s, gcn[i]))
-
+      if len(gcn[i]):
+        r[i] = f(np.take(s, gcn[i]))
   return r
 
 def vtk_cell_neighbors(data, distance, fields, output, display):  
